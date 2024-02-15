@@ -1,0 +1,7 @@
+INDEX VERSION 1.131
+C:\workspaceSTS\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\4280676181.index
+\Miniproject\src
+C:\workspaceSTS\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2829136379.index
+\Miniproject\src
+C:\workspaceSTS\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1652057999.index
+\Miniproject\src

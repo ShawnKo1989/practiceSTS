@@ -1,0 +1,71 @@
+@charset "UTF-8";
+body{
+	background: black;
+	color: #aaaaaa;
+}
+div{
+/* 	border: 1px solid white; */
+}
+.outline{
+	padding: 20px;
+	width: 1200px;
+	margin: 0 auto;
+}
+.alignDiv{
+	margin:0 auto;
+	width: 800px;
+}
+h1,h3 {
+	color: #b4b4b4;
+	margin: 0 auto;
+}
+table{
+	margin: 40px auto;
+	width: 800px;
+	border-collapse: collapse;
+}
+tr, td {
+	border: 1px solid gray;
+}
+td{
+	padding: 5px;
+	padding-right: 12px;
+}
+.toptextArea{
+	border-bottom: 1px solid #aaaaaa;
+	width: fit-content;
+}
+.writingArea1 {
+	height: 20px;
+	width: 100%;
+}
+.writingArea2 {
+	height: 400px;
+	width: 100%;
+}
+.bottomBtnArea{
+	margin-top: 30px;
+	width:100%;;
+}
+#writingUploadBtn{float: right;}
+#MovetoBoardList{float: left;}
+.bottomBtn{
+	color:#aaaaaa;
+	background: transparent;
+	font-weight: 700;
+	font-size: 20px;
+	text-align: center;
+	width: 150px;
+	height: 30px;
+	border-radius: 30px;
+	border: 1px solid white;
+}
+.bottomBtn:hover{
+	cursor: pointer;
+	background: #323232;
+	color: #969696;
+	transition: 0.3s;
+}
+.bottomBtn p{
+	margin-top: 2.5px;
+}

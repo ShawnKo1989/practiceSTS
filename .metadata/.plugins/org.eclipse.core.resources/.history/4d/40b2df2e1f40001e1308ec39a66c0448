@@ -1,0 +1,286 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+
+import dto.SsboardDto;
+
+public class SsboardDao {
+	private Connection conn;
+	public SsboardDao() {
+		try {
+			String driver = "oracle.jdbc.driver.OracleDriver";
+			String url = "jdbc:oracle:thin:@localhost:1521:xe";
+			String dbid = "temp";
+			String dbpw = "1234";
+			
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, dbid, dbpw);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static SsboardDao instance = new SsboardDao();
+	public static SsboardDao getInstance() {
+		return instance;
+	}
+	
+	public ArrayList<SsboardDto> getSsboardList(ArrayList<SsboardDto> sbList, int pageNum) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int endNum = pageNum*25;
+		int startNum = endNum - 24;
+		
+		System.out.println("페이지에 맞는 스크린샷게시판 불러오는중..");
+		
+		String sql = "SELECT rownum, a2.*, (SELECT COUNT(*) FROM ssboard) as totalNum" + 
+				" FROM(SELECT rownum rnum, a1.*" + 
+				" FROM (SELECT sb.*,sc.sscontents,sc.sstype" + 
+				" FROM ssboard sb, sscontents sc " + 
+				" WHERE sb.ssbno = sc.ssbno" + 
+				" ORDER BY sb.ssbno DESC) a1)a2" + 
+				" WHERE rnum >=? and rnum <= ?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, startNum);
+			pstmt.setInt(2, endNum);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				int ssbno = rs.getInt("ssbno");
+				String sstitle = rs.getString("sstitle");
+				String sscontent = rs.getString("sscontent");
+				String sswriter = rs.getString("sswriter");
+				String sswritedate = rs.getString("sswritedate");
+				String sscontents = rs.getString("sscontents");
+				int sslike = rs.getInt("sslike");
+				int ssview = rs.getInt("ssview");
+				int totalNum = rs.getInt("totalnum");
+				
+				sbList.add(new SsboardDto(ssbno,sstitle,sscontent,sswriter,sswritedate,sscontents,sslike,ssview,totalNum)); 
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) {rs.close();}
+				if(pstmt != null) {pstmt.close();}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return sbList;
+	}
+	public ArrayList<SsboardDto> getUserWriting(ArrayList<SsboardDto> sbList,int ssbno) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		System.out.println("유저가 클릭한 스크린샷게시판 불러오는중..");
+		
+		String sql = "SELECT *" + 
+				" FROM ssboard sb, sscontents sc" + 
+				" WHERE sb.ssbno = sc.ssbno" + 
+				" AND sb.ssbno = ?" + 
+				" ORDER BY sb.ssbno DESC";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, ssbno);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				String sstitle = rs.getString("sstitle");
+				String sscontent = rs.getString("sscontent");
+				String sswriter = rs.getString("sswriter");
+				String sswritedate = rs.getString("sswritedate");
+				String sscontents = rs.getString("sscontents");
+				int sslike = rs.getInt("sslike");
+				int ssview = rs.getInt("ssview");
+				
+				sbList.add(new SsboardDto(ssbno,sstitle,sscontent,sswriter,sswritedate,sscontents,sslike,ssview,0)); 
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) {rs.close();}
+				if(pstmt != null) {pstmt.close();}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("게시판내용 데이터로부터 가져오기 성공");
+		return sbList;
+	}
+	public int getPrevNum(int ssbno) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int prevNum = 0;
+		
+		System.out.println("이전게시판 불러오는중..");
+		
+		String sql = "SELECT ssbno,prev" + 
+				" FROM(SELECT ssbno, LAG(ssbno) OVER (ORDER BY ssbno) AS prev" + 
+				" FROM ssboard" + 
+				" ORDER BY ssbno DESC)" + 
+				" WHERE ssbno = ?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, ssbno);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				prevNum = rs.getInt("prev");
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) {rs.close();}
+				if(pstmt != null) {pstmt.close();}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("이전게시판의 ssbno 불러오기 성공");
+		return prevNum;
+	}
+	public int getNextNum(int ssbno) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int nextNum = 0;
+		
+		System.out.println("이전게시판 불러오는중..");
+		
+		String sql = "SELECT ssbno,next" + 
+				" FROM(SELECT ssbno, LEAD(ssbno) OVER (ORDER BY ssbno) AS next" + 
+				" FROM ssboard" + 
+				" ORDER BY ssbno DESC)" + 
+				" WHERE ssbno = ?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, ssbno);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				nextNum = rs.getInt("next");
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) {rs.close();}
+				if(pstmt != null) {pstmt.close();}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("다음게시판의 ssbno 불러오기 성공");
+		return nextNum;
+	}
+	public void getDeleteboard(int ssbno) {
+		PreparedStatement pstmt = null;
+		
+		System.out.println("게시판 삭제중..");
+		
+		String sql = "DELETE " + 
+				" FROM ssboard" + 
+				" WHERE ssbno =?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, ssbno);
+			pstmt.executeUpdate();
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(pstmt != null) {pstmt.close();}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("해당 ssbno의 게시글 삭제 완료");
+	}
+	public void getWritingUpdate(String title, String content) {
+		PreparedStatement pstmt = null;
+		
+		System.out.println("새로운글 등록중..");
+		
+		String sql = "INSERT INTO ssboard(ssbno,sstitle,sscontent,sswriter)" + 
+				" VALUES (ssboard_seq.nextval,?,?,'SeungwooKo')";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, title);
+			pstmt.setString(2, content);
+			pstmt.executeUpdate();
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(pstmt != null) {pstmt.close();}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("새로운 게시글 등록 완료.");
+	}
+	public int getRecentBno() {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		System.out.println("최신등록글의 글번호 얻는중..");
+		int bno = 0;
+		String sql = "SELECT MAX(ssbno) AS ssbno" + 
+				" FROM ssboard";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				bno = rs.getInt("ssbno");
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(pstmt != null) {pstmt.close();}
+				if(rs != null) {rs.close();}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("글번호 확인완료.");
+		return bno;
+	}
+	public void getContentsUpdate(int ssbno, String contents, String category) {
+		PreparedStatement pstmt = null;
+		
+		System.out.println("새로운컨텐츠 등록중..");
+		
+		String sql = "INSERT INTO sscontents(ssbno,sscontents,sstype)" + 
+				" VALUES (?,?,?)";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, ssbno);
+			pstmt.setString(2, contents);
+			pstmt.setString(3, category);
+			pstmt.executeUpdate();
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(pstmt != null) {pstmt.close();}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("새로운 컨텐츠 등록 완료.");
+	}
+}

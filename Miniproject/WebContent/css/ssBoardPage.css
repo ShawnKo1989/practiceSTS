@@ -1,0 +1,108 @@
+@charset "UTF-8";
+body{
+	background: black;
+	color: #aaaaaa;
+}
+div{
+/* 	border: 1px solid white; */
+}
+
+.outline{
+	padding: 20px;
+	width: 1200px;
+	margin: 0 auto;
+}
+.headTitle{
+	margin: 0 auto 30px;
+	width: 640px;
+	border-bottom: 3px solid gray;
+}
+.topBtnArea{
+	margin: 0 auto;
+	width: 640px;
+}
+#topLeftBtn{float:left;}
+#topRightBtn{float:right;}
+.topBtn{
+	font-weight: 700;
+	text-align: center;
+	width: 100px;
+	height: 25px;
+	font-size: 12px;
+}
+.topBtn:hover{
+	color: #bebebe;
+	cursor: pointer;
+}
+table{
+	margin: 40px auto 10px;
+	border-collapse: collapse;
+}
+tr,td {
+	border: 1px solid gray;
+}
+th{text-align: center;}
+tr{
+	margin-top: 30px; 
+}
+td{
+	padding: 20px;
+}
+td img{
+	width: 600px;
+}
+.clickIcon{
+	width: 15px;
+}
+.mdArea{
+	width: 640px;;
+	margin: 0 auto;
+}
+#modifyBtn{float: left;}
+#deleteBtn{float: right;}
+.mdBtns{
+	font-size: 18px;
+	font-weight: 700;
+	text-align: center;
+	width: 100px;
+	height: 28px;
+	border-radius: 50px;
+	border: 1px solid gray;
+	background: transparent;
+}
+.mdBtns:hover{
+	color: #505050;
+	background: #b4b4b4;
+	cursor: pointer;
+	transition: .3s;
+}
+.bottomText{
+	width: fit-content;
+	margin: 70px auto 0;
+}
+.bottom_left{float: left;padding:10px;}
+.bottom_right{float: right;padding:10px;}
+.btnArea{
+	margin: 0 auto;
+	width: 450px;
+	display: flex;
+}
+.bottomBtnText{
+	margin-top: 16px;
+	color: white;
+	font-size: 30px;
+	text-decoration: none;
+}
+.btnButton{
+	border: 1px solid white;
+	margin: 30px;
+	text-align: center;
+	width: 170px;
+	height: 80px;
+	border-radius: 80px;
+}
+.btnButton:hover{
+	cursor: pointer;
+	background: #bebebe	;
+	transition: .3s;
+}
